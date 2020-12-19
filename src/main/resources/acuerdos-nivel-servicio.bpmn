@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_0k566a7" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.4.0">
+  <bpmn:process id="sla_proveedor" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_1" name="Banco requiere comunicaion estable">
+      <bpmn:outgoing>Flow_0obzfud</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_0obzfud" sourceRef="StartEvent_1" targetRef="Activity_1b724qm" />
+    <bpmn:serviceTask id="Activity_1b724qm" name="Banco seleciona proveedor" camunda:class="com.bancofuturo.workflow.sla.BankChooseProviderDelegate">
+      <bpmn:incoming>Flow_0obzfud</bpmn:incoming>
+      <bpmn:outgoing>Flow_167klct</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_167klct" sourceRef="Activity_1b724qm" targetRef="Activity_1vr0jux" />
+    <bpmn:serviceTask id="Activity_1vr0jux" name="Proveedor se compromete con un nivel de servicio" camunda:class="com.bancofuturo.workflow.sla.ProviderAssureSLADelegate">
+      <bpmn:incoming>Flow_167klct</bpmn:incoming>
+      <bpmn:outgoing>Flow_197oim4</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="Gateway_1aq7i7p" name="cumple?">
+      <bpmn:incoming>Flow_197oim4</bpmn:incoming>
+      <bpmn:outgoing>Flow_1whbtmf</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1jnqzsw</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_197oim4" sourceRef="Activity_1vr0jux" targetRef="Gateway_1aq7i7p" />
+    <bpmn:sequenceFlow id="Flow_1whbtmf" name="si" sourceRef="Gateway_1aq7i7p" targetRef="Activity_0klifih">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{cumple}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:serviceTask id="Activity_0klifih" name="Banco puede ofrecer servicios confiables" camunda:class="com.bancofuturo.workflow.sla.SuccessfulySLADelegate">
+      <bpmn:incoming>Flow_1whbtmf</bpmn:incoming>
+      <bpmn:outgoing>Flow_0iv0qow</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_1jnqzsw" name="no" sourceRef="Gateway_1aq7i7p" targetRef="Activity_035ti3d">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{not cumple}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:serviceTask id="Activity_035ti3d" name="Banco presenta demoras o fallos en las plataformas" camunda:class="com.bancofuturo.workflow.sla.FailedSLADelegate">
+      <bpmn:incoming>Flow_1jnqzsw</bpmn:incoming>
+      <bpmn:outgoing>Flow_1u3gb2a</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="Event_0ot2h3c">
+      <bpmn:incoming>Flow_0iv0qow</bpmn:incoming>
+      <bpmn:incoming>Flow_1u3gb2a</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_0iv0qow" sourceRef="Activity_0klifih" targetRef="Event_0ot2h3c" />
+    <bpmn:sequenceFlow id="Flow_1u3gb2a" sourceRef="Activity_035ti3d" targetRef="Event_0ot2h3c" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="sla_proveedor">
+      <bpmndi:BPMNEdge id="Flow_0obzfud_di" bpmnElement="Flow_0obzfud">
+        <di:waypoint x="215" y="287" />
+        <di:waypoint x="320" y="287" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_167klct_di" bpmnElement="Flow_167klct">
+        <di:waypoint x="420" y="287" />
+        <di:waypoint x="500" y="287" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_197oim4_di" bpmnElement="Flow_197oim4">
+        <di:waypoint x="600" y="287" />
+        <di:waypoint x="685" y="287" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1whbtmf_di" bpmnElement="Flow_1whbtmf">
+        <di:waypoint x="710" y="262" />
+        <di:waypoint x="710" y="160" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="721" y="208" width="8" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1jnqzsw_di" bpmnElement="Flow_1jnqzsw">
+        <di:waypoint x="710" y="312" />
+        <di:waypoint x="710" y="420" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="719" y="363" width="13" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0iv0qow_di" bpmnElement="Flow_0iv0qow">
+        <di:waypoint x="760" y="120" />
+        <di:waypoint x="860" y="120" />
+        <di:waypoint x="860" y="269" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1u3gb2a_di" bpmnElement="Flow_1u3gb2a">
+        <di:waypoint x="760" y="460" />
+        <di:waypoint x="860" y="460" />
+        <di:waypoint x="860" y="305" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="179" y="269" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="160" y="312" width="75" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0p1cfko_di" bpmnElement="Activity_1b724qm">
+        <dc:Bounds x="320" y="247" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_05bhpxk_di" bpmnElement="Activity_1vr0jux">
+        <dc:Bounds x="500" y="247" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1aq7i7p_di" bpmnElement="Gateway_1aq7i7p" isMarkerVisible="true">
+        <dc:Bounds x="685" y="262" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="769" y="277" width="42" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_17mf9ia_di" bpmnElement="Activity_0klifih">
+        <dc:Bounds x="660" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_08hgtw1_di" bpmnElement="Activity_035ti3d">
+        <dc:Bounds x="660" y="420" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0ot2h3c_di" bpmnElement="Event_0ot2h3c">
+        <dc:Bounds x="842" y="269" width="36" height="36" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_1ywesl1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.4.0">
+  <bpmn:process id="fusion_banco" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_1" name="Banco inica fusion con otra entidad bancaria">
+      <bpmn:outgoing>Flow_006k1ox</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_006k1ox" sourceRef="StartEvent_1" targetRef="Activity_066s050" />
+    <bpmn:serviceTask id="Activity_066s050" name="Banco adecua tecnologia para la fusion" camunda:class="com.bancofuturo.workflow.fusionbanco.BankPrepareFusionDelegate">
+      <bpmn:incoming>Flow_006k1ox</bpmn:incoming>
+      <bpmn:outgoing>Flow_1t5v73h</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="Gateway_09o49ml" name="esta lista?">
+      <bpmn:incoming>Flow_1t5v73h</bpmn:incoming>
+      <bpmn:outgoing>Flow_031cjc9</bpmn:outgoing>
+      <bpmn:outgoing>Flow_08kon2n</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_1t5v73h" name="3 meses" sourceRef="Activity_066s050" targetRef="Gateway_09o49ml" />
+    <bpmn:sequenceFlow id="Flow_031cjc9" name="si" sourceRef="Gateway_09o49ml" targetRef="Activity_0nfvw4r">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{estaLista}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:serviceTask id="Activity_0nfvw4r" name="Banco continua con sus operaciones" camunda:class="com.bancofuturo.workflow.fusionbanco.FusionReadyDelegate">
+      <bpmn:incoming>Flow_031cjc9</bpmn:incoming>
+      <bpmn:outgoing>Flow_0bue3xo</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_08kon2n" name="no" sourceRef="Gateway_09o49ml" targetRef="Activity_001qm3n">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{not estaLista}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:endEvent id="Event_0yqls0f">
+      <bpmn:incoming>Flow_103emg5</bpmn:incoming>
+      <bpmn:incoming>Flow_0bue3xo</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_103emg5" sourceRef="Activity_001qm3n" targetRef="Event_0yqls0f" />
+    <bpmn:sequenceFlow id="Flow_0bue3xo" sourceRef="Activity_0nfvw4r" targetRef="Event_0yqls0f" />
+    <bpmn:serviceTask id="Activity_001qm3n" name="Banco debe posponer el proceso de fusion" camunda:class="com.bancofuturo.workflow.fusionbanco.FusionNotReadyDelegate">
+      <bpmn:incoming>Flow_08kon2n</bpmn:incoming>
+      <bpmn:outgoing>Flow_103emg5</bpmn:outgoing>
+    </bpmn:serviceTask>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="fusion_banco">
+      <bpmndi:BPMNEdge id="Flow_006k1ox_di" bpmnElement="Flow_006k1ox">
+        <di:waypoint x="215" y="307" />
+        <di:waypoint x="360" y="307" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1t5v73h_di" bpmnElement="Flow_1t5v73h">
+        <di:waypoint x="460" y="307" />
+        <di:waypoint x="605" y="307" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="511" y="289" width="43" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_031cjc9_di" bpmnElement="Flow_031cjc9">
+        <di:waypoint x="630" y="282" />
+        <di:waypoint x="630" y="160" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="642" y="218" width="8" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_08kon2n_di" bpmnElement="Flow_08kon2n">
+        <di:waypoint x="630" y="332" />
+        <di:waypoint x="630" y="450" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="639" y="388" width="13" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_103emg5_di" bpmnElement="Flow_103emg5">
+        <di:waypoint x="680" y="490" />
+        <di:waypoint x="790" y="490" />
+        <di:waypoint x="790" y="325" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0bue3xo_di" bpmnElement="Flow_0bue3xo">
+        <di:waypoint x="680" y="120" />
+        <di:waypoint x="790" y="120" />
+        <di:waypoint x="790" y="289" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="179" y="289" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="152" y="332" width="90" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1pw8cae_di" bpmnElement="Activity_066s050">
+        <dc:Bounds x="360" y="267" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_09o49ml_di" bpmnElement="Gateway_09o49ml" isMarkerVisible="true">
+        <dc:Bounds x="605" y="282" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="685" y="297" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0mogtxt_di" bpmnElement="Activity_0nfvw4r">
+        <dc:Bounds x="580" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0yqls0f_di" bpmnElement="Event_0yqls0f">
+        <dc:Bounds x="772" y="289" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0y471lk_di" bpmnElement="Activity_001qm3n">
+        <dc:Bounds x="580" y="450" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
